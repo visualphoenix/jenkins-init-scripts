@@ -1,5 +1,5 @@
 // Configure global security realm
-def ldap = { instance, ldap_addr, ldap_rootDN, ldap_managerDN, ldap_managerPass ->
+def ldap = { instance, ldap_addr, ldap_rootDN, ldap_managerDN, ldap_managerPass, ldap_userSearchBase='', ldap_userSearch='uid={0}', ldap_groupSearchBase='' ->
   def securityRealm = new hudson.security.LDAPSecurityRealm(
     server=ldap_addr,
     rootDN=ldap_rootDN,

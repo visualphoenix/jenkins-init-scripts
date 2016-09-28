@@ -1,5 +1,5 @@
 // Create user credentials
-def user_credential = { instance, username, password ->
+def user_credential = { instance, username, password, id="${username}_credential", description="${username}_credential" ->
   // Retrieve the Global credential store
   def domain = com.cloudbees.plugins.credentials.domains.Domain.global()
   def store = instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getStore()
@@ -7,8 +7,8 @@ def user_credential = { instance, username, password ->
   // Set up the local user
   def swarm_cred = new com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl(
     com.cloudbees.plugins.credentials.CredentialsScope.GLOBAL,
-    "${username}_credential",
-    "${username}_credential",
+    id,
+    description,
     username,
     password
   )
