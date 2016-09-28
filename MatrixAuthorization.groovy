@@ -3,53 +3,67 @@ def matrix_authorization = { instance, user_mappings ->
   def new_strategy = instance.getAuthorizationStrategy() instanceof hudson.security.ProjectMatrixAuthorizationStrategy ? new hudson.security.ProjectMatrixAuthorizationStrategy() : new hudson.security.GlobalMatrixAuthorizationStrategy()
 
   // http://javadoc.jenkins-ci.org/hudson/security/class-use/Permission.html#hudson.slaves
-  def valid_perms_map = [
-     global_admin:                 jenkins.model.Jenkins.ADMINISTER,
-     global_configure_updatecenter:hudson.PluginManager.CONFIGURE_UPDATECENTER,
-     global_read:                  jenkins.model.Jenkins.READ,
-     global_run_scripts:           jenkins.model.Jenkins.RUN_SCRIPTS,
-     global_upload_plugins:        hudson.PluginManager.UPLOAD_PLUGINS,
+  def known_perms_map = [
+     global_admin:                 [ clazz: "jenkins.model.Jenkins", field: "ADMINISTER" ],
+     global_read:                  [ clazz: "jenkins.model.Jenkins", field: "READ" ],
+     global_run_scripts:           [ clazz: "jenkins.model.Jenkins", field: "RUN_SCRIPTS" ],
+     global_upload_plugins:        [ clazz: "hudson.PluginManager",  field: "UPLOAD_PLUGINS" ],
+     global_configure_updatecenter:[ clazz: "hudson.PluginManager",  field: "CONFIGURE_UPDATECENTER" ],
 
-     credentials_create:           com.cloudbees.plugins.credentials.CredentialsProvider.CREATE,
-     credentials_delete:           com.cloudbees.plugins.credentials.CredentialsProvider.DELETE,
-     credentials_manage_domains:   com.cloudbees.plugins.credentials.CredentialsProvider.MANAGE_DOMAINS,
-     credentials_update:           com.cloudbees.plugins.credentials.CredentialsProvider.UPDATE,
-     credentials_view:             com.cloudbees.plugins.credentials.CredentialsProvider.VIEW,
+     credentials_create:           [ clazz: "com.cloudbees.plugins.credentials.CredentialsProvider", field: "CREATE" ],
+     credentials_delete:           [ clazz: "com.cloudbees.plugins.credentials.CredentialsProvider", field: "DELETE" ],
+     credentials_manage_domains:   [ clazz: "com.cloudbees.plugins.credentials.CredentialsProvider", field: "MANAGE_DOMAINS" ],
+     credentials_update:           [ clazz: "com.cloudbees.plugins.credentials.CredentialsProvider", field: "UPDATE" ],
+     credentials_view:             [ clazz: "com.cloudbees.plugins.credentials.CredentialsProvider", field: "VIEW" ],
 
-     agent_build:                  hudson.model.Computer.BUILD,
-     agent_configure:              hudson.model.Computer.CONFIGURE,
-     agent_connect:                hudson.model.Computer.CONNECT,
-     agent_create:                 hudson.model.Computer.CREATE,
-     agent_delete:                 hudson.model.Computer.DELETE,
-     agent_disconnect:             hudson.model.Computer.DISCONNECT,
+     agent_build:                  [ clazz: "hudson.model.Computer", field: "BUILD" ],
+     agent_configure:              [ clazz: "hudson.model.Computer", field: "CONFIGURE" ],
+     agent_connect:                [ clazz: "hudson.model.Computer", field: "CONNECT" ],
+     agent_create:                 [ clazz: "hudson.model.Computer", field: "CREATE" ],
+     agent_delete:                 [ clazz: "hudson.model.Computer", field: "DELETE" ],
+     agent_disconnect:             [ clazz: "hudson.model.Computer", field: "DISCONNECT" ],
 
-     job_build:                    hudson.model.Item.BUILD,
-     job_cancel:                   hudson.model.Item.CANCEL,
-     job_configure:                hudson.model.Item.CONFIGURE,
-     job_create:                   hudson.model.Item.CREATE,
-     job_delete:                   hudson.model.Item.DELETE,
-     job_discover:                 hudson.model.Item.DISCOVER,
-     job_read:                     hudson.model.Item.READ,
-     job_workspace:                hudson.model.Item.WORKSPACE,
+     job_build:                    [ clazz: "hudson.model.Item", field: "BUILD" ],
+     job_cancel:                   [ clazz: "hudson.model.Item", field: "CANCEL" ],
+     job_configure:                [ clazz: "hudson.model.Item", field: "CONFIGURE" ],
+     job_create:                   [ clazz: "hudson.model.Item", field: "CREATE" ],
+     job_delete:                   [ clazz: "hudson.model.Item", field: "DELETE" ],
+     job_discover:                 [ clazz: "hudson.model.Item", field: "DISCOVER" ],
+     job_read:                     [ clazz: "hudson.model.Item", field: "READ" ],
+     job_workspace:                [ clazz: "hudson.model.Item", field: "WORKSPACE" ],
 
-     run_delete:                   hudson.model.Run.DELETE,
-     run_update:                   hudson.model.Run.UPDATE,
+     run_delete:                   [ clazz: "hudson.model.Run", field: "DELETE" ],
+     run_update:                   [ clazz: "hudson.model.Run", field: "UPDATE" ],
 
-     view_configure:               hudson.model.View.CONFIGURE,
-     view_create:                  hudson.model.View.CREATE,
-     view_delete:                  hudson.model.View.DELETE,
-     view_read:                    hudson.model.View.READ,
+     view_configure:               [ clazz: "hudson.model.View", field: "CONFIGURE" ],
+     view_create:                  [ clazz: "hudson.model.View", field: "CREATE" ],
+     view_delete:                  [ clazz: "hudson.model.View", field: "DELETE" ],
+     view_read:                    [ clazz: "hudson.model.View", field: "READ" ],
 
-     scm_tag:                      hudson.scm.SCM.TAG,
-     metrics_health_check:         jenkins.metrics.api.Metrics.HEALTH_CHECK,
-     metrics_thread_dump:          jenkins.metrics.api.Metrics.THREAD_DUMP,
-     metrics_view:		             jenkins.metrics.api.Metrics.VIEW,
+     scm_tag:                      [ clazz: "hudson.scm", field: "SCM.TAG"],
+     metrics_health_check:         [ clazz: "jenkins.metrics.api.Metrics", field: "HEALTH_CHECK" ],
+     metrics_thread_dump:          [ clazz: "jenkins.metrics.api.Metrics", field: "THREAD_DUMP" ],
+     metrics_view:		             [ clazz: "jenkins.metrics.api.Metrics", field: "VIEW" ],
 
-     job_extendedread:             hudson.model.Item.EXTENDED_READ,
-     job_move:                     com.cloudbees.hudson.plugins.folder.relocate.RelocationAction.RELOCATE,
+     job_extendedread:             [ clazz: "hudson.model.Item", field: "EXTENDED_READ" ],
+     job_move:                     [ clazz: "com.cloudbees.hudson.plugins.folder.relocate.RelocationAction", field: "RELOCATE"],
 
-     view_replay:                  org.jenkinsci.plugins.workflow.cps.replay.ReplayAction.REPLAY,
+     view_replay:                  [ clazz: "org.jenkinsci.plugins.workflow.cps.replay.ReplayAction", field: "REPLAY"],
   ]
+
+  // create a map of valid permissions depending on what plugins/classes are available
+  def valid_perms_map = [:]
+  known_perms_map.each { key, val ->
+    try {
+      def clazz = Class.forName(val['clazz'], false, this.getClass().getClassLoader())
+      def field = clazz.getField(val['field'])
+      if(field) {
+        valid_perms_map.put(key,field.get(clazz))
+      }
+    } catch (Exception e) {
+    } finally {
+    }
+  }
 
   def heading = []
   def user_vals = [:]
