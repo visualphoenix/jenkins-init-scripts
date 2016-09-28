@@ -2,7 +2,7 @@
 def system_message = { instance, html, message ->
   if (html) {
     println "Setting MarkupFormatter to RawHTML"
-    instance.setMarkupFormatter(new RawHtmlMarkupFormatter(false))
+    instance.setMarkupFormatter(new hudson.markup.RawHtmlMarkupFormatter(false))
   }
 
   println "Setting System Message"
