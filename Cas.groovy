@@ -1,11 +1,10 @@
 // Configure global CAS security realm
-def cas = {
-    instance, casServerUrl,
-    forceRenewal=false, enableSingleSignOut=true,
-    casAuthoritiesAttribute="groups,roles", casFullNameAttribute='cn',
-    casEmailAttribute='mail',
-    casProxyEnabled=true, casProxyAllowAny=true, casProxyAllowList=''->
-  hudson.security.cas.CasProtocol casProtocol = new hudson.security.cas.protocols.Cas20Protocol(
+def cas = { instance, casServerUrl,
+            forceRenewal=false, enableSingleSignOut=true,
+            casAuthoritiesAttribute="groups,roles", casFullNameAttribute='cn',
+            casEmailAttribute='mail',
+            casProxyEnabled=true, casProxyAllowAny=true, casProxyAllowList='' ->
+  def casProtocol = new org.jenkinsci.plugins.cas.protocols.Cas20Protocol(
     casAuthoritiesAttribute,
     casFullNameAttribute,
     casEmailAttribute,
@@ -13,7 +12,7 @@ def cas = {
     casProxyAllowAny,
     casProxyAllowList
   )
-  hudson.security.SecurityRealm cas_realm = new hudson.security.cas.CasSecurityRealm(
+  def cas_realm = new org.jenkinsci.plugins.cas.CasSecurityRealm(
     casServerUrl,
     casProtocol,
     forceRenewal,
