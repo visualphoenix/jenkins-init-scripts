@@ -6,7 +6,7 @@ def envvars = { instance, env_var_map ->
   newEnvVarsNodeProperty = null
   envVars = null
 
-  if ( envVarsNodePropertyList == null || envVarsNodePropertyList.size() == 0 ) {
+  if ( !envVarsNodePropertyList ) {
     newEnvVarsNodeProperty = new hudson.slaves.EnvironmentVariablesNodeProperty();
     globalNodeProperties.add(newEnvVarsNodeProperty)
     envVars = newEnvVarsNodeProperty.getEnvVars()
